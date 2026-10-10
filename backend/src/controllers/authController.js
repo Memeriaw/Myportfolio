@@ -23,7 +23,7 @@ const login = async (req, res, next) => {
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) return res.status(401).json({ success: false, message: 'Invalid credentials.' });
       const token = signToken(user);
-      res.cookie('token', token, { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 7 * 24 * 60 * 60 * 1000 });
+      res.cookie('token', token, { httpOnly: true, sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 7 * 24 * 60 * 60 * 1000 });
       return res.json({ success: true, message: 'Login successful.', data: { user: { id: user._id, email: user.email, name: user.name } } });
     }
 
@@ -40,7 +40,7 @@ const login = async (req, res, next) => {
     const token = signToken(user);
     res.cookie('token', token, {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       secure: process.env.NODE_ENV === 'production',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });

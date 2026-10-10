@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
 
-const skillSchema = new mongoose.Schema({
+const messageSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true },
-  category: { type: String, required: true, trim: true },
-  level: { type: String, default: 'Intermediate' },
-  icon: { type: String, default: '' },
-  displayOrder: { type: Number, default: 0 }
+  email: { type: String, required: true, trim: true },
+  subject: { type: String, required: true, trim: true },
+  message: { type: String, required: true },
+  isRead: { type: Boolean, default: false },
+  fingerprint: { type: String, default: '' }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Skill', skillSchema);
+module.exports = mongoose.model('Message', messageSchema);

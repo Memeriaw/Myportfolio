@@ -80,9 +80,16 @@ const seedDatabase = async () => {
 
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@memeriaw.dev';
     const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
-    const existingUser = await User.findOne({ email: adminEmail });
-    if (!existingUser) {
-      const hashedPassword = await bcrypt.hash(adminPassword, 10);
+    const existingUser = await User.findOne({
+      $or: [{ email: adminEmail }, { name: 'Admin' }],
+    });
+    const hashedPassword = await bcrypt.hash(adminPassword, 10);
+    if (existingUser) {
+      existingUser.name = 'Admin';
+      existingUser.email = adminEmail;
+      existingUser.password = hashedPassword;
+      await existingUser.save();
+    } else {
       await User.create({
         name: 'Admin',
         email: adminEmail,
