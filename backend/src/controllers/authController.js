@@ -3,8 +3,9 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const User = require('../models/User');
 const { getStore } = require('../utils/store');
+const { getJwtSecret } = require('../config/security');
 
-const signToken = (user) => jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET || 'supersecretjwtkey', {
+const signToken = (user) => jwt.sign({ id: user._id, email: user.email }, getJwtSecret(), {
   expiresIn: '7d',
 });
 
@@ -64,7 +65,7 @@ const getMe = async (req, res) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecretjwtkey');
+    const decoded = jwt.verify(token, getJwtSecret());
 
     if (mongoose.connection.readyState !== 1) {
       const store = getStore();

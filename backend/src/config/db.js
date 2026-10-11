@@ -6,6 +6,7 @@ const Skill = require('../models/Skill');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const { getStore } = require('../utils/store');
+const { getAdminCredentials } = require('./security');
 
 dotenv.config();
 
@@ -78,8 +79,7 @@ const seedDatabase = async () => {
       ]);
     }
 
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@memeriaw.dev';
-    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    const { email: adminEmail, password: adminPassword } = getAdminCredentials();
     const existingUser = await User.findOne({
       $or: [{ email: adminEmail }, { name: 'Admin' }],
     });
@@ -100,6 +100,7 @@ const seedDatabase = async () => {
     console.log('Database initialized with demo data.');
   } catch (error) {
     console.error('Seeding error:', error.message);
+    throw error;
   }
 };
 
@@ -110,15 +111,16 @@ const connectDB = async () => {
     await mongoose.connect(mongoUri, {
       serverSelectionTimeoutMS: 5000,
     });
-    console.log('MongoDB connected');
-    await seedDatabase();
-    return mongoose.connection;
   } catch (error) {
     console.warn('MongoDB connection error:', error.message);
     console.warn('Using in-memory fallback data store for local development.');
     getStore();
     return null;
   }
+
+  console.log('MongoDB connected');
+  await seedDatabase();
+  return mongoose.connection;
 };
 
 module.exports = connectDB;

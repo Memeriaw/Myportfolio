@@ -1,8 +1,12 @@
+const dotenv = require('dotenv');
+
+dotenv.config();
+
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const dotenv = require('dotenv');
 const connectDB = require('./src/config/db');
+const { validateSecurityConfig } = require('./src/config/security');
 const profileRoutes = require('./src/routes/profileRoutes');
 const projectRoutes = require('./src/routes/projectRoutes');
 const skillRoutes = require('./src/routes/skillRoutes');
@@ -10,8 +14,6 @@ const messageRoutes = require('./src/routes/messageRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const systemRoutes = require('./src/routes/systemRoutes');
 const { notFoundHandler, errorHandler } = require('./src/middleware/errorHandler');
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -57,6 +59,7 @@ app.use(errorHandler);
 
 const startServer = async () => {
   try {
+    validateSecurityConfig();
     await connectDB();
     app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);

@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const { getAdminCredentials } = require('../config/security');
 
 const createDefaultProfile = () => ({
   _id: 'profile-default',
@@ -63,14 +64,14 @@ const createDefaultSkills = () => [
 
 const ensureStore = () => {
   if (!global.__portfolioStore) {
-    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    const { email, password: adminPassword } = getAdminCredentials();
     const userPassword = bcrypt.hashSync(adminPassword, 10);
     global.__portfolioStore = {
       profile: createDefaultProfile(),
       projects: createDefaultProjects(),
       skills: createDefaultSkills(),
       messages: [],
-      users: [{ _id: 'admin-user', name: 'Admin', email: (process.env.ADMIN_EMAIL || 'admin@memeriaw.dev').toLowerCase(), password: userPassword }],
+      users: [{ _id: 'admin-user', name: 'Admin', email, password: userPassword }],
     };
   }
   return global.__portfolioStore;

@@ -1,14 +1,8 @@
-import { ArrowRight, BriefcaseBusiness, Code2, PenTool, Rocket, ServerCog, Sparkles } from 'lucide-react';
+import { ArrowRight, BriefcaseBusiness, Code2, MapPin, PenTool, Rocket, ServerCog } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../api/client';
 import ProjectCard from '../components/ProjectCard';
-
-const stats = [
-  { value: '2+', label: 'Years learning & building' },
-  { value: '10+', label: 'Projects explored' },
-  { value: '5+', label: 'Core technologies' },
-  { value: '100%', label: 'Focused on quality' },
-];
 
 const services = [
   { title: 'Frontend Development', description: 'Responsive interfaces, modern layouts, and smooth user experiences using React and clean UI systems.', icon: Code2 },
@@ -21,11 +15,6 @@ const processSteps = [
   { step: '02', title: 'Design', text: 'I shape the interface and data flow into a clean and structured experience for users.' },
   { step: '03', title: 'Build', text: 'I create the application with maintainable architecture, strong logic, and practical performance.' },
   { step: '04', title: 'Launch', text: 'I refine the release, validate behavior, and make sure the final result is ready to use.' },
-];
-
-const testimonials = [
-  { quote: 'Memeriaw combines practical coding skill with a thoughtful product mindset. The end result feels modern, useful, and polished.', name: 'Project Collaborator', role: 'Product & Design Partner' },
-  { quote: 'Working with him feels structured and productive. Complex ideas are translated into simple, functional experiences.', name: 'Team Member', role: 'Startup Team' },
 ];
 
 export default function HomePage() {
@@ -60,52 +49,45 @@ export default function HomePage() {
     return <div className="page-shell"><div className="loading-box">Loading portfolio...</div></div>;
   }
 
-  const cvHref = profile?.resumeUrl && profile.resumeUrl !== '#' ? profile.resumeUrl : 'mailto:memeriawadugnaw@gmail.com?subject=CV%20Request';
+  const cvHref = profile?.resumeUrl && profile.resumeUrl !== '#' ? profile.resumeUrl : null;
 
   return (
     <>
       <section className="hero-section">
         <div className="container hero-grid">
           <div className="hero-copy">
-            <span className="eyebrow">Hello, I’m</span>
-            <h1>{profile?.name}</h1>
+            <span className="eyebrow"><span className="availability-dot" /> Portfolio · Developer</span>
+            <h1>Hello, I’m <span>{profile?.name || 'Memeriaw Adugnaw'}</span></h1>
             <h2>{profile?.title}</h2>
             <p className="lead-text">{profile?.bio}</p>
             <div className="button-row">
-              <a href="/projects" className="button primary">View My Projects <ArrowRight size={16} /></a>
-              <a href="/contact" className="button secondary">Contact Me</a>
-            </div>
-            <div className="button-row small-row">
-              <a href={cvHref} className="button ghost">Download CV</a>
+              <Link to="/projects" className="button primary">Explore my work <ArrowRight size={16} /></Link>
+              <Link to="/contact" className="button secondary">Let’s talk</Link>
+              {cvHref && <a href={cvHref} className="button ghost" target="_blank" rel="noreferrer">View résumé</a>}
             </div>
             <div className="mini-badges">
-              <span><Sparkles size={14} /> Available for freelance work</span>
-              <span><BriefcaseBusiness size={14} /> Based in Ethiopia</span>
+              {profile?.location && <span><MapPin size={14} />{profile.location}</span>}
+              {profile?.education && <span><BriefcaseBusiness size={14} />{profile.education}</span>}
             </div>
           </div>
 
-          <div className="profile-card">
-            <img src={profile?.profileImage || '/profile-portrait.png'} alt={profile?.name} />
-          </div>
-        </div>
-      </section>
-
-      <section className="section-block stats-block">
-        <div className="container stats-grid">
-          {stats.map((stat) => (
-            <div key={stat.label} className="stat-card">
-              <strong>{stat.value}</strong>
-              <span>{stat.label}</span>
+          <div className="hero-visual">
+            <div className="hero-orbit hero-orbit-one" />
+            <div className="hero-orbit hero-orbit-two" />
+            <div className="profile-card">
+              <img src={profile?.profileImage || '/profile-portrait.png'} alt={profile?.name || 'Portfolio owner'} />
             </div>
-          ))}
+            <div className="hero-note"><span className="hero-note-icon"><Code2 size={17} /></span><span><strong>Thoughtful code</strong><small>Built for people</small></span></div>
+          </div>
         </div>
       </section>
 
       <section className="section-block">
         <div className="container">
-          <div className="section-heading centered">
+          <div className="section-heading">
             <span className="eyebrow">What I Do</span>
             <h2>Building useful digital experiences</h2>
+            <p>I combine thoughtful design and dependable engineering to turn ideas into practical products.</p>
           </div>
           <div className="service-grid">
             {services.map((service) => {
@@ -154,32 +136,12 @@ export default function HomePage() {
 
       <section className="section-block muted">
         <div className="container">
-          <div className="section-heading centered">
-            <span className="eyebrow">Feedback</span>
-            <h2>What people say</h2>
-          </div>
-          <div className="testimonial-grid">
-            {testimonials.map((item) => (
-              <blockquote key={item.name} className="testimonial-card">
-                <p>“{item.quote}”</p>
-                <footer>
-                  <strong>{item.name}</strong>
-                  <span>{item.role}</span>
-                </footer>
-              </blockquote>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section-block muted">
-        <div className="container">
           <div className="cta-panel">
             <div>
               <span className="eyebrow">Let’s build</span>
               <h2>Need a clean, functional, and modern web product?</h2>
             </div>
-            <a href="/contact" className="button primary">Start a project <Rocket size={16} /></a>
+            <Link to="/contact" className="button primary">Start a conversation <Rocket size={16} /></Link>
           </div>
         </div>
       </section>
@@ -189,15 +151,16 @@ export default function HomePage() {
           <div className="section-heading">
             <span className="eyebrow">Core Strength</span>
             <h2>Skills Overview</h2>
+            <p>A selection of tools and technologies I use to plan and build digital products.</p>
           </div>
           <div className="skill-grid">
-            {skills.map((skill) => (
+            {skills.length > 0 ? skills.map((skill) => (
               <div key={skill._id} className="skill-card">
                 <div className="skill-icon">{skill.icon || '⚡'}</div>
                 <h3>{skill.name}</h3>
                 <p>{skill.category}</p>
               </div>
-            ))}
+            )) : <p className="empty-state">Skills will appear here soon.</p>}
           </div>
         </div>
       </section>

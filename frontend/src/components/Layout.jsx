@@ -66,21 +66,23 @@ export default function Layout() {
 
           <nav className={`main-nav ${menuOpen ? 'open' : ''}`}>
             {navItems.map((item) => (
-              <NavLink key={item.to} to={item.to} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              <NavLink key={item.to} to={item.to} onClick={() => setMenuOpen(false)} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
                 {item.label}
               </NavLink>
             ))}
-            <NavLink to="/admin/login" className="nav-link admin-link">Admin</NavLink>
+            {user
+              ? <NavLink to="/admin" onClick={() => setMenuOpen(false)} className={({ isActive }) => `nav-link admin-link ${isActive ? 'active' : ''}`}>Dashboard</NavLink>
+              : <NavLink to="/admin/login" onClick={() => setMenuOpen(false)} className={({ isActive }) => `nav-link admin-link ${isActive ? 'active' : ''}`}>Admin</NavLink>}
             {user && (
-              <button type="button" className="button ghost small" onClick={logout}>Logout</button>
+              <button type="button" className="button ghost small" onClick={async () => { await logout(); setMenuOpen(false); }}>Logout</button>
             )}
           </nav>
 
           <div className="nav-actions">
-            <button type="button" className="theme-toggle" aria-label="Toggle theme" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+            <button type="button" className="theme-toggle" aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
               {theme === 'dark' ? <SunMedium size={18} /> : <MoonStar size={18} />}
             </button>
-            <button type="button" className="menu-toggle" aria-label="Open menu" onClick={() => setMenuOpen(!menuOpen)}>
+            <button type="button" className="menu-toggle" aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
               {menuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
           </div>
